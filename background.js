@@ -36,8 +36,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       chrome.scripting.executeScript({
         target: { tabId: tabId },
         files: ['foreground.js']
-      });
-      
+      }); 
+      console.log("Script injected")
+
     }).catch( err => console.log(err)) 
 
     // chrome.scripting.insertCSS({
