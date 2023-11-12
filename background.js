@@ -24,6 +24,7 @@ chrome.runtime.onInstalled.addListener(() => {
 
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  
   if ( tab.url.includes("mail.google.com/mail/u/0/#inbox?compose=new") && changeInfo.status == 'complete' ) {
     console.log("Open new email writing")
 
@@ -40,22 +41,8 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       console.log("Script injected")
 
     }).catch( err => console.log(err)) 
-
-    // chrome.scripting.insertCSS({
-    //   target: { tabId: tabId },
-    //   files: ["./foreground_styles.css"]
-    // }).then( () => {
-    //   console.log("CSS injected")
-    //   chrome.scripting.executeScript({
-    //     target: { tabId: tabId },
-    //     files: ['content.js']
-    //   });
-    // })
-
-
-
-
   }
+
 });
 
 
