@@ -1,10 +1,36 @@
-var emailsEditTabs = document.querySelectorAll('div[g_editable]');
+// Can't use const / let here !
+let currentTabs = new Set(document.querySelectorAll('div[g_editable]'));
 
-console.log(emailsEditTabs);
 
-if ( emailsEditTabs ) {
-    console.log("ah oué")
-}
+document.addEventListener('click', function(event) {
+    if ( currentTabs.has(event.target) ) {
+        console.log("Clicked on a tab !", event.target.id , "Position" , event.clickX, event.clickY);
+    };
+});
+
+
+// Track tabs state
+var targetNode = document.body;
+var observerConfig = { attributes: true, childList: true, subtree: true };
+// yes it's dogshit but it's working with offuscation
+var observer = new MutationObserver( _mutations => {
+    currentTabs = new Set(document.querySelectorAll('div[g_editable]'));
+    // console.log(currentTabs);
+});
+observer.observe(targetNode, observerConfig);
+
+
+
+
+
+
+
+// 
+// console.log(emailsEditTabs);
+
+// if ( emailsEditTabs ) {
+//     console.log("ah oué")
+// }
 
 
 
