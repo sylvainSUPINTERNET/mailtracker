@@ -27,7 +27,8 @@
         "tabs",
         "storage",
         "scripting",
-        "notifications"
+        "notifications",
+        "contextMenus"
     ],
     "host_permissions": [
         "https://www.google.com/*",
