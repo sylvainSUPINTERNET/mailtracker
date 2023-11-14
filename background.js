@@ -4,22 +4,55 @@ chrome.runtime.onInstalled.addListener(() => {
 
   // add tab to context menu
   chrome.contextMenus.create({
-    id: "Add gmail pixel",
-    title: "Add gmail pixel",
+    id: "addGmailPixel",
+    title: "Add Gmail pixel",
     contexts: ["editable"]
   });
 
-  chrome.contextMenus.onClicked.addListener(function(info, tab) {
-    if (info.menuItemId === "Add gmail pixel") {
-
-      chrome.tabs.sendMessage(tab.id, { action: "doSomethingSpecial" });
-
-    }
-  });
+  // inject foreground
+  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   
+    let regex = /^https:\/\/mail\.google\.com\/mail\/u\/0\/(.*compose=new)?$/;
+  
+    if ( regex.test(tab.url) && changeInfo.status == 'complete' ) {
+      console.log("Open new email writing")
+  
+      chrome.scripting.insertCSS({
+        target: { tabId: tabId },
+        files: ['./foreground.css']
+      }).then( () => {
+  
+        console.log("CSS injected")
+  
+        chrome.scripting.executeScript({
+          target: { tabId: tabId },
+          files: ['foreground.js']
+        }); 
+  
+        console.log("Script injected")
+  
+      }).catch( err => console.log(err)) 
+    }
+  
+  });
+
+  //Select item in menu context
+  chrome.contextMenus.onClicked.addListener(function(info, tab) {
+    console.log("Clicked on context menu", info, tab);
+  
+    if ( info.editable && info.menuItemId === "addGmailPixel" ) {
+      chrome.tabs.sendMessage(tab.id, { action: "addPixelAction" });
+    }
+  
+  });
 
 
+  // chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+  //   console.log("Élément cliqué :", message.element);
+  //   chrome.runtime.sendMessage({action: "doSomethingSpecial"});
+  // });
 
+  
 });
 
 
@@ -65,31 +98,7 @@ chrome.runtime.onInstalled.addListener(() => {
 // });
 
 
-// chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  
-//   let regex = /^https:\/\/mail\.google\.com\/mail\/u\/0\/(.*compose=new)?$/;
 
-//   if ( regex.test(tab.url) && changeInfo.status == 'complete' ) {
-//     console.log("Open new email writing")
-
-//     chrome.scripting.insertCSS({
-//       target: { tabId: tabId },
-//       files: ['./foreground.css']
-//     }).then( () => {
-
-//       console.log("CSS injected")
-
-//       chrome.scripting.executeScript({
-//         target: { tabId: tabId },
-//         files: ['foreground.js']
-//       }); 
-
-//       console.log("Script injected")
-
-//     }).catch( err => console.log(err)) 
-//   }
-
-// });
 
 
 // chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {

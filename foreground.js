@@ -1,15 +1,83 @@
-chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-    if (message.action === "doSomethingSpecial") {
-      // L'action spécifique à réaliser après le clic droit sur l'élément du menu
-      console.log("Action spécifique déclenchée");
-    }
 
+// Track current email content tabs
+let currentTabs = new Set(document.querySelectorAll('div[g_editable]'));
+let targetNode = document.body;
+let observerConfig = { attributes: true, childList: true, subtree: true };
+let observer = new MutationObserver( _mutations => {
+    currentTabs = new Set(document.querySelectorAll('div[g_editable]'));
+    console.log(currentTabs);
+});
+observer.observe(targetNode, observerConfig);
+
+
+
+// track where to inject pixel
+var lastClickedElement = null;
+document.addEventListener('contextmenu', function(event) {
+  lastClickedElement =  event.target;
+  console.log("LAST CLICKED :  ",lastClickedElement);
+}, true);
+
+
+// listen for pixel menu context selected
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.action === "addPixelAction") {
+      console.log("The context menu item was clicked!");
+      console.log("Use this as reference : ", lastClickedElement);
+
+      // Consider action add pixel ONLY if valid email tab content
+      if ( lastClickedElement.id ) {
+        currentTabs.forEach( emailTab => {
+          if ( emailTab.id === lastClickedElement.id ) {
+            console.log("FOUND IT !", emailTab.id, " can inject pixel pic !");
+            
+            // TODO : 
+            // Check if no other pixel, if not Inject pixel picture
+          }
+        })
+      }
+  }
 });
 
-document.addEventListener('contextmenu', function(event) {
-    let clickedElement = event.target;
-    chrome.runtime.sendMessage({element: clickedElement.outerHTML});
-  }, true);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+//     if (message.action === "doSomethingSpecial") {
+//       console.log("Action spécifique déclenchée");
+//     }
+// });
+
+
 
 
 // // Can't use const / let here !
