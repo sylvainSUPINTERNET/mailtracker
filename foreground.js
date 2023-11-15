@@ -35,7 +35,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             // Check if no other pixel, if not Inject pixel picture
             prompt("Entrer votre nom de pixel :",
              "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png")
-
           }
         })
       }
