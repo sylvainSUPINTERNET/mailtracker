@@ -1,6 +1,51 @@
+let webSocket = null;
+
+function keepAlive() {
+  const keepAliveIntervalId = setInterval(
+    () => {
+      if (webSocket) {
+        webSocket.send('keepalive');
+      } else {
+        clearInterval(keepAliveIntervalId);
+      }
+    },
+    // Set the interval to 20 seconds to prevent the service worker from becoming inactive.
+    20 * 1000 
+  );
+}
+
+function connect() {
+  console.log("Connecting to websocket")
+  
+  webSocket = new WebSocket('ws://localhost:8888');
+
+  webSocket.onopen = (event) => {
+    console.log('websocket open');
+    keepAlive();
+  };
+
+  webSocket.onmessage = (event) => {
+    console.log(`websocket received message: ${event.data}`);
+  };
+
+  webSocket.onclose = (event) => {
+    console.log('websocket connection closed');
+    webSocket = null;
+    console.log("Try to reconnect in 15s");
+    setTimeout(connect, 15000);
+  };
+}
+
+function disconnect() {
+  if (webSocket == null) {
+    return;
+  }
+  webSocket.close();
+}
 
 
 chrome.runtime.onInstalled.addListener(() => {
+  connect();
 
   // add tab to context menu
   chrome.contextMenus.create({
@@ -8,6 +53,8 @@ chrome.runtime.onInstalled.addListener(() => {
     title: "Add Gmail pixel",
     contexts: ["editable"]
   });
+
+  
 
   // inject foreground
   chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
