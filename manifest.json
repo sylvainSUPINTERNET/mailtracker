@@ -29,7 +29,8 @@
         "storage",
         "scripting",
         "notifications",
-        "contextMenus"
+        "contextMenus",
+        "webRequest"
     ],
     "host_permissions": [
         "https://www.google.com/*",
