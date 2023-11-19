@@ -21,6 +21,8 @@ document.addEventListener('contextmenu', function(event) {
 
 // listen for pixel menu context selected
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  
+  console.log(request);
   if (request.action === "addPixelAction") {
       console.log("The context menu item was clicked!");
       console.log("Use this as reference : ", lastClickedElement);
@@ -29,11 +31,26 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       if ( lastClickedElement.id ) {
         currentTabs.forEach( emailTab => {
           if ( emailTab.id === lastClickedElement.id ) {
-            console.log("FOUND IT !", emailTab.id, " can inject pixel pic !");
-            
-            // TODO : 
-            // Check if no other pixel, if not Inject pixel picture
-            prompt("Entrer votre nom de pixel :","https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png")
+            // console.log("FOUND IT !", emailTab.id, " can inject pixel pic !");
+
+            chrome.storage.sync.get(['code'], function(result) {
+              console.log('Value currently is ' + result.code);
+              
+              if ( !document.getElementById(`tracking_pixel_${emailTab.id}`) ) {
+                let img = document.createElement('img');
+                // img.src = "https://cdn.pixabay.com/photo/2015/09/16/08/55/online-942406_960_720.jpg";
+                img.src = "http://localhost:3000/pixel? code=" + result.code + "&email=" + emailTab.id;
+
+                img.style = "width: 36px; height: 36px;";
+                img.id = `tracking_pixel_${emailTab.id}`;
+                document.getElementById(emailTab.id).appendChild(img);
+              }
+  
+
+            });
+              
+
+
           }
         })
       }

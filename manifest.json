@@ -30,7 +30,8 @@
         "scripting",
         "notifications",
         "contextMenus",
-        "webRequest"
+        "webRequest",
+        "declarativeNetRequest"
     ],
     "host_permissions": [
         "https://www.google.com/*",

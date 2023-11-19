@@ -1,51 +1,59 @@
-let webSocket = null;
+// let webSocket = null;
 
-function keepAlive() {
-  const keepAliveIntervalId = setInterval(
-    () => {
-      if (webSocket) {
-        webSocket.send('keepalive');
-      } else {
-        clearInterval(keepAliveIntervalId);
-      }
-    },
-    // Set the interval to 20 seconds to prevent the service worker from becoming inactive.
-    20 * 1000 
-  );
-}
+// function keepAlive() {
+//   const keepAliveIntervalId = setInterval(
+//     () => {
+//       if (webSocket) {
+//         webSocket.send('keepalive');
+//       } else {
+//         clearInterval(keepAliveIntervalId);
+//       }
+//     },
+//     // Set the interval to 20 seconds to prevent the service worker from becoming inactive.
+//     20 * 1000 
+//   );
+// }
 
-function connect() {
-  console.log("Connecting to websocket")
+// function connect() {
+//   console.log("Connecting to websocket")
   
-  webSocket = new WebSocket('ws://localhost:8888');
+//   webSocket = new WebSocket('ws://localhost:8888');
 
-  webSocket.onopen = (event) => {
-    console.log('websocket open');
-    keepAlive();
-  };
+//   webSocket.onopen = (event) => {
+//     console.log('websocket open');
+//     keepAlive();
+//   };
 
-  webSocket.onmessage = (event) => {
-    console.log(`websocket received message: ${event.data}`);
-  };
+//   webSocket.onmessage = (event) => {
+//     console.log(`websocket received message: ${event.data}`);
+//   };
 
-  webSocket.onclose = (event) => {
-    console.log('websocket connection closed');
-    webSocket = null;
-    console.log("Try to reconnect in 15s");
-    setTimeout(connect, 15000);
-  };
-}
+//   webSocket.onclose = (event) => {
+//     console.log('websocket connection closed');
+//     webSocket = null;
+//     console.log("Try to reconnect in 15s");
+//     setTimeout(connect, 15000);
+//   };
+// }
 
-function disconnect() {
-  if (webSocket == null) {
-    return;
-  }
-  webSocket.close();
-}
+// function disconnect() {
+//   if (webSocket == null) {
+//     return;
+//   }
+//   webSocket.close();
+// }
+
 
 
 chrome.runtime.onInstalled.addListener(() => {
-  connect();
+  // connect(); 
+
+  // code use to identify the user and avoid to track himself
+  let codeValue = UUIDv4.generate();
+  chrome.storage.sync.set({ "code":  codeValue }).then(() => {
+    console.log("Code : " + codeValue);
+  });
+  
 
   // add tab to context menu
   chrome.contextMenus.create({
@@ -92,71 +100,44 @@ chrome.runtime.onInstalled.addListener(() => {
     }
   
   });
-
-
-  // chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-  //   console.log("Élément cliqué :", message.element);
-  //   chrome.runtime.sendMessage({action: "doSomethingSpecial"});
-  // });
-
   
 });
 
-
-// // On setup
-// chrome.runtime.onInstalled.addListener(() => {
-
-
-//   chrome.contextMenus.create({
-//     id: "Add gmail pixel",
-//     title: "Add gmail pixel",
-//     contexts: ["editable"]
-//   });
-
-
-//   // https://developer.chrome.com/docs/extensions/reference/storage/
-//   chrome.storage.sync.set({
-//     title: "Mailtrack",
-//     welcomeMsg: "Ready to track your emails !",
-//   });
-
-//   chrome.storage.sync.get(["title", "welcomeMsg"], function(result) {
-
-//     // ID must be different to see the notification, otherwise nothing will happen !
-//     chrome.notifications.create(`mailtrack-welcome-${new Date().getTime()}`, {
-//       type: "basic",
-//       iconUrl: "icon.png",
-//       title: `${result.title}`,
-//       message: `${result.welcomeMsg}`
-//     });
-
-//   });
- 
-// });
-
-
-// chrome.contextMenus.onClicked.addListener(function(info, tab) {
-//   if (info.menuItemId === "Add gmail pixel") {
-
-//     // TODO: get parent tab id to inject HTML pixel ( should only work in context of a new email and target is content_editable)
-//     // console.log("POGT")
-//     // chrome.tabs.create({}); // This will open a new tab
-//   }
-// });
+var UUIDv4 = new function() {
+	function generateNumber(limit) {
+	   var value = limit * Math.random();
+	   return value | 0;
+	}
+	function generateX() {
+		var value = generateNumber(16);
+		return value.toString(16);
+	}
+	function generateXes(count) {
+		var result = '';
+		for(var i = 0; i < count; ++i) {
+			result += generateX();
+		}
+		return result;
+	}
+	function generateVariant() {
+		var value = generateNumber(16);
+		var variant =  (value & 0x3) | 0x8;
+		return variant.toString(16);
+	}
+    // UUID v4
+    //
+    //   varsion: M=4 
+    //   variant: N
+    //   pattern: xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx
+    //
+	this.generate = function() {
+  	    var result = generateXes(8)
+  	         + '-' + generateXes(4)
+  	         + '-' + '4' + generateXes(3)
+  	         + '-' + generateVariant() + generateXes(3)
+  	         + '-' + generateXes(12)
+  	    return result;
+	};
+};
 
 
-
-
-
-// chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-//   console.log("Élément cliqué :", message.element);
-// });
-
-
-// // On click
-// // chrome.browserAction.onClicked.addListener(function(tab) {
-
-// //   // https://developer.chrome.com/docs/extensions/reference/tabs/
-// //   chrome.tabs.create({ url: "https://mailtrack.io/" });
-
-// // });
