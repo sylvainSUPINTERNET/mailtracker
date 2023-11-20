@@ -38,8 +38,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
               
               if ( !document.getElementById(`tracking_pixel_${emailTab.id}`) ) {
                 let img = document.createElement('img');
-                // img.src = "https://cdn.pixabay.com/photo/2015/09/16/08/55/online-942406_960_720.jpg";
-                img.src = "http://localhost:3000/pixel? code=" + result.code + "&email=" + emailTab.id;
+                img.src = "https://cdn.pixabay.com/photo/2015/09/16/08/55/online-942406_960_720.jpg";
+
+                
+                // img.src = "http://localhost:3000/pixel? code=" + result.code + "&email=" + emailTab.id;
 
                 img.style = "width: 36px; height: 36px;";
                 img.id = `tracking_pixel_${emailTab.id}`;

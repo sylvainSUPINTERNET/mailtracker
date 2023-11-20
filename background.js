@@ -46,6 +46,7 @@
 
 
 chrome.runtime.onInstalled.addListener(() => {
+
   // connect(); 
 
   // code use to identify the user and avoid to track himself
