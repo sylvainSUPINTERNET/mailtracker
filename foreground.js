@@ -11,7 +11,8 @@ chrome.runtime.onMessage.addListener(
         document.querySelectorAll('[role="textbox"]').forEach( emailTab => {
           if ( !document.getElementById(`tracking_pixel_${emailTab.id}`) ) {
             let img = document.createElement('img');
-            img.src = "https://cdn.pixabay.com/photo/2015/09/16/08/55/online-942406_960_720.jpg";
+            // img.src = "https://cdn.pixabay.com/photo/2015/09/16/08/55/online-942406_960_720.jpg";
+            img.src = "http://localhost:3000/"+ result.code + "/pixel?u="+result.code
             img.style = "width: 36px; height: 36px;";
             img.id = `tracking_pixel_${emailTab.id}`;
             emailTab.appendChild(img);

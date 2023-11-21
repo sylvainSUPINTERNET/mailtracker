@@ -1,101 +1,47 @@
-// let webSocket = null;
-
-// function keepAlive() {
-//   const keepAliveIntervalId = setInterval(
-//     () => {
-//       if (webSocket) {
-//         webSocket.send('keepalive');
-//       } else {
-//         clearInterval(keepAliveIntervalId);
-//       }
-//     },
-//     // Set the interval to 20 seconds to prevent the service worker from becoming inactive.
-//     20 * 1000 
-//   );
-// }
-
-// function connect() {
-//   console.log("Connecting to websocket")
-  
-//   webSocket = new WebSocket('ws://localhost:8888');
-
-//   webSocket.onopen = (event) => {
-//     console.log('websocket open');
-//     keepAlive();
-//   };
-
-//   webSocket.onmessage = (event) => {
-//     console.log(`websocket received message: ${event.data}`);
-//   };
-
-//   webSocket.onclose = (event) => {
-//     console.log('websocket connection closed');
-//     webSocket = null;
-//     console.log("Try to reconnect in 15s");
-//     setTimeout(connect, 15000);
-//   };
-// }
-
-// function disconnect() {
-//   if (webSocket == null) {
-//     return;
-//   }
-//   webSocket.close();
-// }
-
+// User has to click on popup to add pixel for ALL email
 
 chrome.runtime.onInstalled.addListener(() => {
+  // generate unique identifier ( use to generate path ) 
+  
+  // if user send query params his id + path of image = himself ( do nothing on server side )
+  // path + no query params matching = other user ( track on server side )
 
-
-  chrome.webRequest.onBeforeRequest.addListener(
-    function(details) {
-      if ( details.url.includes('https://cdn.pixabay.com/photo/2015/09/16/08/55/online-942406_960_720.jpg') ) {
-        console.log("detect pixel");
-        // add code to send to server
-
-        chrome.storage.sync.get(['code'], function(result) {
-          return {
-            redirectUrl: "http://localhost:3000/pixel?code="+result.code
-          };
-
-        });
-
-
-      }
-      // if (details.url.includes("http://localhost:3000/pixel")) {
-      //     // Perform your actions here
-      //     // For example, read or write to chrome.storage.sync
-      // }
-  },
-  {urls: ["*://*/*"]},
-  // ["blocking"]
-  );
-
+  // Also means if user uninstall after sending email, he will be tracked as other user !
   let codeValue = UUIDv4.generate();
+
   chrome.storage.sync.set({ "code":  codeValue }).then(() => {
     console.log("Code : " + codeValue);
   });
 
+
+  let injected = false;
   
   let regex = /^https:\/\/mail\.google\.com\/mail\/u\/0\/(.*compose=new)?$/;
-
   chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) { 
-
-    if ( regex.test(tab.url) ) {  
-
-      chrome.scripting.executeScript({
-        target: { tabId: tabId },
-        files: ['foreground.js']
-      });
+	console.log("CHANGE TAB : ", tab.url);
+    if ( regex.test(tab.url) && changeInfo.status == 'complete') {  
+		
+		if ( injected ) return;
+		
+		console.log("Open new email writing");
+		chrome.scripting.insertCSS({
+			target: { tabId: tabId },
+			files: ['./foreground.css']
+		});
+		console.log("Inject");
+		chrome.scripting.executeScript({
+			target: { tabId: tabId },
+			files: ['foreground.js']
+		});
+		
+	  injected = true;
 
     }
-
   });
 
 });
 
 
-// chrome.runtime.onInstalled.addListener(() => {
 
 //   // connect(); 
 
