@@ -1,7 +1,5 @@
-// chrome.runtime.sendMessage({ 
-//     message: "get_name"
-// }, response => {
-//     if (response.message === 'success') {
-//         document.querySelector('div').innerHTML = `Hello ${response.payload}`;
-//     }
-// });
+chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {action: "add_pixels"}, function(response) {
+        console.log(response.success);
+    });
+});

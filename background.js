@@ -44,65 +44,90 @@
 // }
 
 
-
 chrome.runtime.onInstalled.addListener(() => {
 
-  // connect(); 
-
-  // code use to identify the user and avoid to track himself
   let codeValue = UUIDv4.generate();
   chrome.storage.sync.set({ "code":  codeValue }).then(() => {
     console.log("Code : " + codeValue);
   });
-  
-
-  // add tab to context menu
-  chrome.contextMenus.create({
-    id: "addGmailPixel",
-    title: "Add Gmail pixel",
-    contexts: ["editable"]
-  });
 
   
+  let regex = /^https:\/\/mail\.google\.com\/mail\/u\/0\/(.*compose=new)?$/;
 
-  // inject foreground
-  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  
-    let regex = /^https:\/\/mail\.google\.com\/mail\/u\/0\/(.*compose=new)?$/;
-  
-    if ( regex.test(tab.url) && changeInfo.status == 'complete' ) {
-      console.log("Open new email writing")
-  
-      chrome.scripting.insertCSS({
+  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) { 
+
+    if ( regex.test(tab.url) ) {  
+
+      chrome.scripting.executeScript({
         target: { tabId: tabId },
-        files: ['./foreground.css']
-      }).then( () => {
-  
-        console.log("CSS injected")
-  
-        chrome.scripting.executeScript({
-          target: { tabId: tabId },
-          files: ['foreground.js']
-        }); 
-  
-        console.log("Script injected")
-  
-      }).catch( err => console.log(err)) 
+        files: ['foreground.js']
+      });
+
     }
-  
+
   });
 
-  //Select item in menu context
-  chrome.contextMenus.onClicked.addListener(function(info, tab) {
-    console.log("Clicked on context menu", info, tab);
-  
-    if ( info.editable && info.menuItemId === "addGmailPixel" ) {
-      chrome.tabs.sendMessage(tab.id, { action: "addPixelAction" });
-    }
-  
-  });
-  
 });
+
+
+// chrome.runtime.onInstalled.addListener(() => {
+
+//   // connect(); 
+
+//   // code use to identify the user and avoid to track himself
+//   let codeValue = UUIDv4.generate();
+//   chrome.storage.sync.set({ "code":  codeValue }).then(() => {
+//     console.log("Code : " + codeValue);
+//   });
+  
+
+//   // add tab to context menu
+//   chrome.contextMenus.create({
+//     id: "addGmailPixel",
+//     title: "Add Gmail pixel",
+//     contexts: ["editable"]
+//   });
+
+  
+
+//   // inject foreground
+//   chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  
+//     let regex = /^https:\/\/mail\.google\.com\/mail\/u\/0\/(.*compose=new)?$/;
+  
+//     if ( regex.test(tab.url) && changeInfo.status == 'complete' ) {
+//       console.log("Open new email writing")
+  
+//       chrome.scripting.insertCSS({
+//         target: { tabId: tabId },
+//         files: ['./foreground.css']
+//       }).then( () => {
+  
+//         console.log("CSS injected")
+  
+//         chrome.scripting.executeScript({
+//           target: { tabId: tabId },
+//           files: ['foreground.js']
+//         }); 
+  
+//         console.log("Script injected")
+  
+//       }).catch( err => console.log(err)) 
+//     }
+  
+//   });
+
+//   //Select item in menu context
+//   chrome.contextMenus.onClicked.addListener(function(info, tab) {
+//     console.log("Clicked on context menu", info, tab);
+  
+//     if ( info.editable && info.menuItemId === "addGmailPixel" ) {
+//       chrome.tabs.sendMessage(tab.id, { action: "addPixelAction" });
+//     }
+  
+//   });
+  
+// });
 
 var UUIDv4 = new function() {
 	function generateNumber(limit) {
