@@ -46,6 +46,31 @@
 
 chrome.runtime.onInstalled.addListener(() => {
 
+
+  chrome.webRequest.onBeforeRequest.addListener(
+    function(details) {
+      if ( details.url.includes('https://cdn.pixabay.com/photo/2015/09/16/08/55/online-942406_960_720.jpg') ) {
+        console.log("detect pixel");
+        // add code to send to server
+
+        chrome.storage.sync.get(['code'], function(result) {
+          return {
+            redirectUrl: "http://localhost:3000/pixel?code="+result.code
+          };
+
+        });
+
+
+      }
+      // if (details.url.includes("http://localhost:3000/pixel")) {
+      //     // Perform your actions here
+      //     // For example, read or write to chrome.storage.sync
+      // }
+  },
+  {urls: ["*://*/*"]},
+  // ["blocking"]
+  );
+
   let codeValue = UUIDv4.generate();
   chrome.storage.sync.set({ "code":  codeValue }).then(() => {
     console.log("Code : " + codeValue);
