@@ -20,9 +20,9 @@ document.addEventListener('paste', function(event) {
     img.src =  "https://upload.wikimedia.org/wikipedia/commons/2/22/Icones_pixel.png";
     img.style = "width: 36px; height: 36px;";
     img.id = `tracking_pixel`;
-    activeElement.appendChild(img);
+    activeElement.insertBefore(img, activeElement.firstChild);
     console.log("added pixel with success");
-    
+
   }
 
 });
