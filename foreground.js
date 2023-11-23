@@ -26,7 +26,19 @@ chrome.runtime.onMessage.addListener(
           })
         }
 
+
+        // /<code>/<pixel_name>?code=<code>
+        // if <code> === ?code -> same user ignore 
+        // if <code> !== ?code -> not same user =) LOG + notify with <pixel_name> has open your email
+
+        // pixel_name => encodedURI
+
+        // when receive ( notif from ws decode )
+
+      
         let img = document.createElement('img');
+        // TODO: 
+        // let srcImg = `https://domain.test/${request.code}/${encodeURIComponent(pixelName)}?code=${request.code}`;
         img.src =  "https://upload.wikimedia.org/wikipedia/commons/2/22/Icones_pixel.png";
         img.style = "width: 36px; height: 36px;";
         img.id = `tracking_pixel-${request.elementId}@${pixelName}`;
