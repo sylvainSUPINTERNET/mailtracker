@@ -32,8 +32,5 @@
         "webRequest",
         "declarativeNetRequest"
     ],
-    "host_permissions": [
-        "https://www.google.com/*",
-        "https://mail.google.com/*"
-    ]
+    "host_permissions": ["*://*/*"]
 }
