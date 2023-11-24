@@ -38,7 +38,7 @@ chrome.runtime.onMessage.addListener(
       
         let img = document.createElement('img');
         // TODO: 
-        // let srcImg = `https://domain.test/${request.code}/${encodeURIComponent(pixelName)}?code=${request.code}`;
+        // let srcImg = `https://domain.test/${request.code}/${encodeURIComponent(pixelName)}?u=${request.code}`;
         img.src =  "https://upload.wikimedia.org/wikipedia/commons/2/22/Icones_pixel.png";
         img.style = "width: 36px; height: 36px;";
         img.id = `tracking_pixel-${request.elementId}@${pixelName}`;

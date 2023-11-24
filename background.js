@@ -1,8 +1,27 @@
-// User has to click on popup to add pixel for ALL email
-
-importScripts('service-worker-utils.js')
-
 // chrome.runtime.onInstalled.addListener(() => { });
+
+  // NOTE(philc): These notifications use the system notification UI. So, if you don't have
+  // notifications enabled from your browser (e.g. in Notification Settings in OSX), then
+  // chrome.notification.create will succeed, but you won't see it.
+//   const notificationId = "VimiumUpgradeNotification";
+//   await chrome.notifications.create(
+//     notificationId,
+//     {
+//       type: "basic",
+//       iconUrl: chrome.runtime.getURL("icons/vimium.png"),
+//       title: "Vimium Upgrade",
+//       message:
+//         `Vimium has been upgraded to version ${currentVersion}. Click here for more information.`,
+//       isClickable: true,
+//     },
+//   );
+
+
+
+import { UUIDv4 } from './service-worker-utils.js';
+import {initializeSSE} from './service-worker-sse.js';
+
+	initializeSSE();
 
 	// generate unique identifier ( use to generate path ) 
 
@@ -44,6 +63,7 @@ importScripts('service-worker-utils.js')
 		console.log("Last clicked : ", message.elementId);
 		elId = message.elementId;
 	}
+
   })
 
 
@@ -64,7 +84,6 @@ importScripts('service-worker-utils.js')
 		});
     }
   });
-
 
 
 

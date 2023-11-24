@@ -34,3 +34,5 @@ var UUIDv4 = new function() {
   	    return result;
 	};
 };
+
+export {UUIDv4}
