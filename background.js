@@ -23,6 +23,18 @@ import {initializeSSE} from './service-worker-sse.js';
 
 	initializeSSE();
 
+
+/* 	const notificationId = "VimiumUpgradeNotification";
+	await chrome.notifications.create(
+		notificationId,
+		{
+			type: "basic",
+			iconUrl: chrome.runtime.getURL("icon.png"),
+			title: "TEST",
+			message:`TEST`
+		},
+	); */
+
 	// generate unique identifier ( use to generate path ) 
 
 	// if user send query params his id + path of image = himself ( do nothing on server side )
@@ -62,6 +74,18 @@ import {initializeSSE} from './service-worker-sse.js';
 		console.log(message);
 		console.log("Last clicked : ", message.elementId);
 		elId = message.elementId;
+	}
+
+	if ( message.action === "notify") {
+		console.log("create notification");
+		chrome.notifications.create('id_notification', {
+			type: 'basic',
+			iconUrl: 'icon.png',
+			title: 'Titre de la Notification',
+			message: 'Message de la notification'
+		}, function(notificationId) {
+			console.log('Notification créée avec ID:', notificationId);
+		});
 	}
 
   })
