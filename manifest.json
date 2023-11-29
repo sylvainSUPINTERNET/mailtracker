@@ -2,7 +2,7 @@
     "name": "Chrome Extension MV3",
     "description": "Building a Chrome Extension MV3",
     "version": "0.1.0",
-    "minimum_chrome_version": "116",
+    "minimum_chrome_version": "111",
     "manifest_version": 3,
     "icons": {
         "16": "icon.png",
